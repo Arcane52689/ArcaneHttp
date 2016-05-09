@@ -1,5 +1,14 @@
 url = "http://localhost:3000/api/cards/commanders"
 
+
+data = {
+  name: 'me',
+  people: ["you", "not you"]
+}
+
+
+
+
 var ArcaneHttp = window.ArcaneHttp = function(method, url, data, options) {
   this.method = method;
   this.url = url;
@@ -35,10 +44,8 @@ ArcaneHttp.prototype.initializeRequest = function() {
   this.request.onreadystatechange = this.checkStatus.bind(this);
   this.request.open(this.method, this.url);
 
-  // this.request.setRequestHeader('Content-Type', 'application/json')
-  if (this.options.testing) {
-    this.request.responseType = this.options.responseType || 'json'
-  }
+  // this.request.setRequestHeader('Content-Type', 'application/json');
+  this.request.responseType = this.options.responseType || "json";
 }
 
 ArcaneHttp.prototype.checkStatus = function() {
@@ -50,6 +57,8 @@ ArcaneHttp.prototype.checkStatus = function() {
     console.log('request is loading');
   } else if (this.request.readyState === 4) {
     console.log('request is complete');
+    console.log(this.request.response);
+    // console.log(this.request.responseText)
     if (Math.floor(this.request.status / 100) === 2) {
       this.executeCallbacks('success');
     } else if (Math.floor(this.request.status / 100) === 4) {
@@ -62,11 +71,12 @@ ArcaneHttp.prototype.checkStatus = function() {
 
 ArcaneHttp.prototype.send = function() {
   if (this.request.readyState === 1) {
-    this.request.send(this.data);
+    this.request.send(null);
   }
 }
 
 ArcaneHttp.prototype.executeCallbacks = function(status) {
+
   if (this._callbacks[status]) {
     for (var i = 0; i < this._callbacks[status].length; i++) {
       this._callbacks[status][i](this.request.response, this.request);
